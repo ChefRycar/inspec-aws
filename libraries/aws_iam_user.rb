@@ -30,6 +30,10 @@ class AwsIamUser < Inspec.resource(1)
     @user[:has_console_password?]
   end
 
+  def has_policies?
+    @user[:has_policies?]
+  end
+
   def access_keys
     @user[:access_keys].map { |access_key|
       @access_key_factory.create_access_key(access_key)

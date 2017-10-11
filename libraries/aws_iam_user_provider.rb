@@ -38,12 +38,17 @@ module AwsIam
         aws_user.access_keys
       end
 
+      def has_policies?(aws_user)
+        !aws_user.policies.first.nil?
+      end
+
       def convert(aws_user)
         {
           name: name(aws_user),
           has_mfa_enabled?: has_mfa_enabled?(aws_user),
           has_console_password?: has_console_password?(aws_user),
           access_keys: access_keys(aws_user),
+          has_policies?: has_policies?(aws_user)
         }
       end
     end
