@@ -13,6 +13,10 @@ class AWSConnection
     Aws.config.update(opts)
   end
 
+  def cloudtrail
+    @cloudtrail ||= Aws::CloudTrail::Client.new
+  end
+
   def ec2_resource
     @ec2_resource ||= Aws::EC2::Resource.new
   end
