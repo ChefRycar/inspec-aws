@@ -17,6 +17,8 @@ HashSyntax:
   Enabled: true
 LineLength:
   Enabled: true
+  IgnoreCopDirectives: true
+  Max: 100
 EmptyLinesAroundBlockBody:
   Enabled: false
 MethodLength:
