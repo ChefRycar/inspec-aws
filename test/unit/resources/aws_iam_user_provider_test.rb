@@ -31,6 +31,8 @@ class AwsIamUserProviderTest < Minitest::Test
       has_mfa_enabled?: true,
       has_console_password?: true,
       access_keys: [],
+      policies: [],
+      attached_policies: [],
     }
     assert @user_provider.list_users == [mock_user_output, mock_user_output]
   end
@@ -99,10 +101,21 @@ class AwsIamUserProviderTest < Minitest::Test
     assert_equal [access_key], @user_provider.user(Username)[:access_keys]
   end
 
+  def test_policies_returns_policy
+    policy = Object.new
+
+    @mock_iam_resource.expect(
+      :user,
+      create_mock_user(policies: [policy]),
+      [Username],
+    )
+    assert @user_provider.user(Username)[:has_policies?]
+  end
+
   private
 
   def create_mock_user(has_console_password: true, has_mfa_enabled: true,
-                       access_keys: [])
+                       access_keys: [], policies: [], attached_policies: [])
     mock_login_profile = Minitest::Mock.new
     mock_login_profile.expect :create_date, has_console_password ? 'date' : nil
 
@@ -111,6 +124,8 @@ class AwsIamUserProviderTest < Minitest::Test
     mock_user.expect :mfa_devices, has_mfa_enabled ? ['device'] : []
     mock_user.expect :login_profile, mock_login_profile
     mock_user.expect :access_keys, access_keys
+    mock_user.expect :policies, policies
+    mock_user.expect :attached_policies, attached_policies
   end
 
   def create_mock_user_throw(exception)
@@ -124,5 +139,7 @@ class AwsIamUserProviderTest < Minitest::Test
     mock_user.expect :mfa_devices, []
     mock_user.expect :login_profile, mock_login_profile
     mock_user.expect :access_keys, []
+    mock_user.expect :policies, []
+    mock_user.expect :attached_policies, []
   end
 end
