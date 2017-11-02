@@ -111,6 +111,39 @@ class AwsIamUserProviderTest < Minitest::Test
     )
     assert @user_provider.user(Username)[:has_policies?]
   end
+  
+  def test_policies_returns_no_policy
+    policy = Object.new
+
+    @mock_iam_resource.expect(
+      :user,
+      create_mock_user(policies: []),
+      [Username],
+    )
+    refute @user_provider.user(Username)[:has_policies?]
+  end
+  
+  def test_policies_returns_attached_policies
+    policy = Object.new
+
+    @mock_iam_resource.expect(
+      :user,
+      create_mock_user(attached_policies: [policy]),
+      [Username],
+    )
+    assert @user_provider.user(Username)[:has_attached_policies?]
+  end
+  
+  def test_policies_returns_no_attached_policies
+    policy = Object.new
+
+    @mock_iam_resource.expect(
+      :user,
+      create_mock_user(attached_policies: []),
+      [Username],
+    )
+    refute @user_provider.user(Username)[:has_attached_policies?]
+  end
 
   private
 
